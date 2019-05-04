@@ -1,3 +1,5 @@
+# -*- mode: conf; -*-
+
 # Basically, a custom DSL for API SDK generation.
 ROOT http://httpbin.org
 
