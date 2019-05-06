@@ -1,3 +1,5 @@
+% http://csci431.artifice.cc/notes/prolog-parsing.html
+
 :- use_module(library(pio)).
 :- set_prolog_flag(double_quotes, chars).
 
