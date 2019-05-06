@@ -7,6 +7,8 @@ any([]) --> [].
 any([H|T]) --> [H], any(T).
 ws --> [W], { char_type(W, space) }, ws.
 ws --> [].
+mws --> [W], { char_type(W, space) }, mws.
+mws --> [W], { char_type(W, space) }.
 identifier([H|T]) --> [H], { code_type(H, alpha) ; H = '-' }, identifier(T).
 identifier([]) --> [].
 
@@ -16,10 +18,12 @@ method("POST").
 
 domain(Host) --> "ROOT", any(Host).
 
-% TODO Fix this part
-route(Method, Url) --> [Method], { method(Method) }, any(Url), ws.
+% FIXME: Currently the matches must end in terminating clause of an EOL or route breaks.
+route(Method, Url) --> identifier(Method), mws, any(Url), ws, "\n".
 routes(Res) --> routes([], Res).
-routes(Acc, Res) --> route(Method, Url),
+routes(Acc, Res) --> ws,
+                     route(Method, Url),
+                     ws,
                      {
                        D = fn{method: Method, url: Url},
                        append(Acc, [D], Acc2)
