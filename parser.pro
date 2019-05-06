@@ -1,4 +1,6 @@
 % http://csci431.artifice.cc/notes/prolog-parsing.html
+% https://www.metalevel.at/prolog/dcg
+% http://www.pathwayslms.com/swipltuts/dcg/
 
 :- use_module(library(pio)).
 :- set_prolog_flag(double_quotes, chars).
