@@ -15,15 +15,18 @@ mws --> [W], { char_type(W, space) }, mws.
 mws --> [W], { char_type(W, space) }.
 identifier([H|T]) --> [H], { code_type(H, alpha) ; H = '-' }, identifier(T).
 identifier([]) --> [].
+newline --> "\n", newline.
+newline --> [].
 
-method("ROOT").
+%method("ROOT").
 method("GET").
 method("POST").
+method(M) --> identifier(M), { method(M) }.
 
 domain(Host) --> "ROOT", any(Host).
 
 % FIXME: Currently the matches must end in terminating clause of an EOL or route breaks.
-route(Method, Url) --> identifier(Method), mws, any(Url), ws, "\n".
+route(Method, Url) --> method(Method), mws, identifier(Url), ws, newline.
 routes(Res) --> routes([], Res).
 routes(Acc, Res) --> ws,
                      route(Method, Url),
