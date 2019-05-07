@@ -23,7 +23,7 @@ method("GET").
 method("POST").
 method(M) --> identifier(M), { method(M) }.
 
-domain(Host) --> "ROOT", any(Host), ws, newline.
+domain(Host) --> "ROOT", ws, any(Host), ws, newline.
 
 route(Method, Url) --> method(Method), mws, any(Url), ws, newline.
 routes(Res) --> routes([], Res).
