@@ -23,10 +23,9 @@ method("GET").
 method("POST").
 method(M) --> identifier(M), { method(M) }.
 
-domain(Host) --> "ROOT", any(Host).
+domain(Host) --> "ROOT", any(Host), ws, newline.
 
-% FIXME: Currently the matches must end in terminating clause of an EOL or route breaks.
-route(Method, Url) --> method(Method), mws, identifier(Url), ws, newline.
+route(Method, Url) --> method(Method), mws, any(Url), ws, newline.
 routes(Res) --> routes([], Res).
 routes(Acc, Res) --> ws,
                      route(Method, Url),
@@ -40,10 +39,11 @@ routes(R, R) --> [].
 
 dcg(Host, Urls) --> domain(Host), routes(Urls).
 
-main(S1, S2) :-
-  phrase(dcg(Host, Url), "ROOT http://httpbin.org\n\nGET /ip"),
-  string_chars(S1, Host),
-  string_chars(S2, Url).
+main(S1, Urls) :-
+  phrase(dcg(Host, Urls), "ROOT http://httpbin.org\n\nGET /ip"),
+  string_chars(S1, Host).
+  %string_chars(H, Host).
+  %string_chars(S2, Url).
   %% open('petstore.ezsdk', read, In),
   %% phrase(dcg(Host, Url), In),
   %% format('~w~n', [Host, Url]),
