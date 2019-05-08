@@ -39,6 +39,17 @@ routes(R, R) --> [].
 
 dcg(Host, Urls) --> domain(Host), routes(Urls).
 
+% https://stackoverflow.com/questions/13503953/dcg-and-left-recursion
+comma --> ",".
+csv_line(Res) --> csv_line([], Res).
+csv_line(Acc, Res) --> identifier(A), { append(Acc, [A], Res) }.
+csv_line(Acc, Res) --> identifier(A), { append(Acc, [A], Acc2) }, comma, csv_line(Acc2, Res).
+csv_line(Res, Res) --> [].
+my_csv(Res) --> my_csv([], Res).
+my_csv(Acc, Res) --> csv_line(A), { append(Acc, [A], Res) }.
+my_csv(Acc, Res) --> csv_line(A), { append(Acc, [A], Acc2) }, "\n", my_csv(Acc2, Res).
+my_csv(Res, Res) --> [].
+
 main(S1, Urls) :-
   phrase(dcg(Host, Urls), "ROOT http://httpbin.org\n\nGET /ip"),
   string_chars(S1, Host).
