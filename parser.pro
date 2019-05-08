@@ -15,6 +15,8 @@ mws --> [W], { char_type(W, space) }, mws.
 mws --> [W], { char_type(W, space) }.
 identifier([H|T]) --> [H], { code_type(H, alpha) ; H = '-' }, identifier(T).
 identifier([]) --> [].
+not_identifier([H|T]) --> [H], { \+ (code_type(H, alpha) ; H = '-') }, not_identifier(T).
+not_identifier([]) --> [].
 newline --> "\n", newline.
 newline --> [].
 
@@ -50,9 +52,21 @@ my_csv(Acc, Res) --> csv_line(A), { append(Acc, [A], Res) }.
 my_csv(Acc, Res) --> csv_line(A), { append(Acc, [A], Acc2) }, "\n", my_csv(Acc2, Res).
 my_csv(Res, Res) --> [].
 
+alphas_only(Res) --> alphas_only([], Res).
+alphas_only(Acc, Res) --> identifier(Alphas), {append(Acc, [Alphas], Res)}.
+alphas_only(Acc, Res) --> identifier(Alphas), {append(Acc, [Alphas], Acc2)}, not_identifier(_), alphas_only(Acc2, Res).
+alphas_only(R, R) --> [].
+
+to_js(Url) :-
+  string_chars(SMethod, Url.method),
+  string_chars(SUrl, Url.url),
+  format('sdk.~w.~w', [SMethod, SUrl]).
+
 main(S1, Urls) :-
   phrase(dcg(Host, Urls), "ROOT http://httpbin.org\n\nGET /ip"),
-  string_chars(S1, Host).
+  string_chars(S1, Host),
+  [H|_] = Urls,
+  to_js(H).
   %string_chars(H, Host).
   %string_chars(S2, Url).
   %% open('petstore.ezsdk', read, In),
