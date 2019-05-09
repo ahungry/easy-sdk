@@ -25,13 +25,15 @@ method("GET").
 method("POST").
 method(M) --> identifier(M), { method(M) }.
 
-domain(Host) --> "ROOT", ws, any(Host), ws, newline.
+domain(Host) --> "ROOT", mws, any(Host).
 
-route(Method, Url) --> method(Method), mws, any(Url), ws, newline.
+route(Method, Url) --> method(Method), mws, any(Url).
 routes(Res) --> routes([], Res).
-routes(Acc, Res) --> ws,
-                     route(Method, Url),
-                     ws,
+routes(Acc, Res) --> route(Method, Url),
+                     { D = fn{method:Method, url:Url},
+                       append(Acc, [D], Res)}.
+routes(Acc, Res) --> route(Method, Url),
+                     newline,
                      {
                        D = fn{method: Method, url: Url},
                        append(Acc, [D], Acc2)
@@ -39,7 +41,7 @@ routes(Acc, Res) --> ws,
                      routes(Acc2, Res).
 routes(R, R) --> [].
 
-dcg(Host, Urls) --> domain(Host), routes(Urls).
+dcg(Host, Urls) --> domain(Host), newline, routes(Urls).
 
 % https://stackoverflow.com/questions/13503953/dcg-and-left-recursion
 comma --> ",".
